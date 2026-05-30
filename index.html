@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linda Newnham</title>
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Linda Newnham" />
+<meta property="og:description" content="Journalist, författare och redaktör." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #faf8f5;
+    --paper: #ffffff;
+    --ink: #1b1815;
+    --ink-2: #2f2b25;
+    --ink-3: #635d55;
+    --ink-4: #9a9488;
+    --rule: #e5dfd5;
+    --cream: #f1ebe0;
+    --sand: #e6dcc8;
+    --accent: #6b2936;
+    --pop: #c8a96e;
+    --serif: 'EB Garamond', Georgia, serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 58px; /* height of topbar */
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--serif);
+    font-size: 18px;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--accent); color: #fff; }
+
+  /* ====== TOPBAR ====== */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 1320px; margin: 0 auto;
+    padding: 14px 32px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .brand {
+    font-size: 15px; font-weight: 500; letter-spacing: 0.01em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .brand-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
+  .topnav { display: flex; gap: 4px; margin-left: auto; }
+  .topnav a {
+    font-size: 15px; font-weight: 400;
+    color: var(--ink-3);
+    padding: 8px 16px; border-radius: 999px;
+    transition: color .15s, background .15s;
+  }
+  .topnav a:hover { color: var(--ink); background: var(--cream); }
+  .topbar .cta {
+    font-size: 14px; padding: 8px 20px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    border: 0; font-weight: 500;
+    font-family: var(--serif);
+    white-space: nowrap;
+    transition: opacity .15s;
+  }
+  .topbar .cta:hover { opacity: .85; }
+
+  /* ====== CATEGORY TEXT MENU (above hero) ====== */
+  .cat-menu {
+    border-bottom: 1px solid var(--rule);
+    display: flex; justify-content: center;
+    overflow: hidden;
+  }
+  .cat-menu-inner {
+    display: flex; align-items: stretch;
+  }
+  .cat-menu a {
+    font-style: italic; font-weight: 400;
+    font-size: clamp(18px, 2vw, 26px);
+    letter-spacing: -0.01em;
+    color: var(--ink-3);
+    padding: 18px 40px;
+    position: relative;
+    transition: color .15s, background .15s;
+  }
+  .cat-menu a:hover { color: var(--ink); background: var(--cream); }
+  .cat-menu a + a::before {
+    content: "";
+    position: absolute; left: 0; top: 22%; bottom: 22%;
+    width: 1px; background: var(--rule);
+  }
+
+  /* ====== BACK PILL BUTTON ====== */
+  .btn-back {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--serif); font-size: 15px; font-weight: 400;
+    font-style: italic;
+    padding: 10px 22px 10px 18px; border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--paper); color: var(--ink-2);
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .btn-back:hover { background: var(--cream); color: var(--ink); border-color: var(--ink-4); }
+  .btn-back svg { width: 14px; height: 14px; flex-shrink: 0; transition: transform .15s; }
+  .btn-back:hover svg { transform: translateX(-2px); }
+
+  .page { max-width: 1320px; margin: 0 auto; padding: 0 32px; }
+
+  /* ====== HERO ====== */
+  .hero {
+    padding: 88px 0 72px;
+    display: grid; grid-template-columns: 1.15fr 1fr;
+    gap: 56px; align-items: end;
+    border-bottom: 1px solid var(--rule);
+  }
+  .eyebrow {
+    font-size: 11px; font-weight: 500;
+    color: var(--ink-4); letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 28px;
+  }
+  .eyebrow::before {
+    content: ""; width: 24px; height: 1px; background: var(--ink-4);
+  }
+  .hero h1 {
+    font-size: clamp(56px, 7.5vw, 108px);
+    font-weight: 400; line-height: 0.92;
+    letter-spacing: -0.02em; margin: 0 0 20px;
+  }
+  .hero .lede {
+    font-style: italic; font-weight: 400;
+    font-size: clamp(22px, 2.4vw, 32px);
+    line-height: 1.25; color: var(--ink-3);
+    margin: 0 0 44px;
+  }
+  .hero-meta {
+    display: grid; grid-template-columns: repeat(3, auto);
+    gap: 36px; align-items: start;
+    padding-top: 28px; border-top: 1px solid var(--rule);
+  }
+  .hero-meta dt {
+    font-size: 10px; font-weight: 500;
+    color: var(--ink-4); letter-spacing: 0.18em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .hero-meta dd {
+    margin: 0; font-size: 15px; color: var(--ink-2);
+    font-weight: 400; line-height: 1.35;
+  }
+  .portrait-wrap {
+    position: relative; aspect-ratio: 4/5;
+    overflow: hidden; border-radius: 2px;
+    background: var(--cream);
+  }
+  .portrait-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    object-position: center top;
+  }
+  .portrait-tag {
+    position: absolute; left: 16px; bottom: 16px;
+    background: var(--paper); color: var(--ink);
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; font-weight: 500;
+    padding: 8px 12px; border-radius: 2px;
+  }
+  .portrait-tag b { color: var(--accent); font-weight: 600; }
+
+  /* ====== CATEGORY CARDS ====== */
+  #categories {
+    border-bottom: 1px solid var(--rule);
+  }
+  .cat-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cat-card {
+    position: relative;
+    display: block;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    border-right: 1px solid var(--rule);
+  }
+  .cat-card:last-child { border-right: none; }
+
+  .cat-card-media {
+    position: absolute; inset: 0;
+    transition: transform .6s ease;
+    background: #1e1c19;
+  }
+  .cat-card:hover .cat-card-media { transform: scale(1.04); }
+  .cat-card-media img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  .cat-card::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(170deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,.6) 100%);
+    pointer-events: none;
+    transition: opacity .3s;
+  }
+  .cat-card:hover::after { opacity: .8; }
+
+  .cat-card-foot {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 1;
+    padding: 24px 28px 28px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .cat-card-word {
+    font-style: italic; font-weight: 400;
+    font-size: clamp(30px, 3.5vw, 56px);
+    letter-spacing: -0.02em; line-height: 1;
+    color: #fff;
+  }
+  .cat-card-arrow {
+    color: rgba(255,255,255,.5);
+    font-style: normal; font-size: 22px;
+    transition: transform .2s, color .2s;
+    flex-shrink: 0; padding-bottom: 4px;
+  }
+  .cat-card:hover .cat-card-arrow {
+    transform: translate(4px, -4px);
+    color: rgba(255,255,255,.9);
+  }
+
+  /* ====== CATEGORY SECTION ====== */
+  .category-section {
+    border-bottom: 1px solid var(--rule);
+  }
+  .category-section:last-of-type { border-bottom: none; }
+
+  .section-nav { padding: 28px 0; }
+
+  .cat-hero {
+    position: relative;
+    width: 100%;
+    height: 62vh; min-height: 340px; max-height: 660px;
+    overflow: hidden;
+    background: #1e1c19;
+  }
+  .cat-hero-media {
+    position: absolute; inset: 0;
+  }
+  .cat-hero-media img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .cat-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,.58) 0%, rgba(0,0,0,.28) 55%, rgba(0,0,0,.1) 100%);
+  }
+  .cat-hero-content {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 40px 48px;
+  }
+  .cat-hero-label {
+    font-size: 11px; font-weight: 500;
+    color: rgba(255,255,255,.45); letter-spacing: 0.18em;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .cat-hero-title {
+    margin: 0;
+    font-size: clamp(56px, 8vw, 120px);
+    font-style: italic; font-weight: 400;
+    letter-spacing: -0.025em; line-height: 0.88;
+    color: #fff;
+  }
+
+  /* ====== EXAMPLE CARDS ====== */
+  .example-grid-wrap { padding: 48px 0 0; }
+  .example-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .example-card {
+    display: flex; flex-direction: column;
+    background: var(--bg);
+    transition: background .2s;
+  }
+  .example-card:hover { background: var(--cream); }
+  .example-thumb {
+    aspect-ratio: 3/2;
+    overflow: hidden;
+    background: var(--sand);
+    flex-shrink: 0;
+  }
+  .example-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .4s ease;
+  }
+  .example-card:hover .example-thumb img { transform: scale(1.03); }
+  .example-body {
+    padding: 20px 24px 28px;
+    flex: 1; display: flex; flex-direction: column; gap: 8px;
+  }
+  .example-body .tag {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .example-body h3 {
+    margin: 0; font-size: 20px; font-weight: 500;
+    line-height: 1.2; letter-spacing: -0.01em;
+  }
+  .example-body p {
+    margin: 0; font-style: italic;
+    font-size: 15px; color: var(--ink-3); line-height: 1.5;
+  }
+
+  /* ====== FOOTER ====== */
+  footer {
+    background: var(--ink); color: var(--bg);
+  }
+  .footer-inner {
+    max-width: 1320px; margin: 0 auto; padding: 96px 32px 48px;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 180px 1fr 1fr; gap: 40px;
+    padding-bottom: 80px; border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  footer h2 {
+    font-size: clamp(48px, 6vw, 96px);
+    font-weight: 400; line-height: 0.92; letter-spacing: -0.025em;
+    margin: 0;
+  }
+  footer h2 em { font-style: italic; color: var(--pop); }
+  .contact-list {
+    display: flex; flex-direction: column; gap: 16px; align-items: flex-end;
+  }
+  .contact-row {
+    display: flex; align-items: center; gap: 14px;
+    color: rgba(255,255,255,.75);
+    font-size: 17px; padding: 8px 0;
+    transition: color .15s;
+  }
+  .contact-row:hover { color: var(--pop); }
+  .contact-row .icn {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.18);
+    display: grid; place-items: center;
+    flex-shrink: 0; transition: border-color .15s;
+  }
+  .contact-row:hover .icn { border-color: var(--pop); }
+  .footer-meta {
+    padding-top: 28px; display: flex; justify-content: space-between;
+    font-size: 11px; color: rgba(255,255,255,.3);
+    letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500;
+  }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 960px) {
+    .topbar-inner { padding: 14px 20px; gap: 16px; }
+    .hero { grid-template-columns: 1fr; gap: 40px; padding: 56px 0 40px; }
+    .portrait-wrap { max-width: 380px; margin: 0 auto; width: 100%; }
+    .cat-card-grid { grid-template-columns: 1fr; }
+    .cat-card { aspect-ratio: 4/3; border-right: none; border-bottom: 1px solid var(--rule); }
+    .cat-card:last-child { border-bottom: none; }
+    .cat-hero-content { padding: 28px 32px; }
+    .example-grid { grid-template-columns: 1fr 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .contact-list { align-items: flex-start; }
+  }
+
+  @media (max-width: 600px) {
+    .topbar-inner { padding: 12px 16px; }
+    .topnav { display: none; }
+    .cat-menu a { padding: 16px 24px; font-size: 18px; }
+    .page { padding: 0 20px; }
+    .hero { padding: 40px 0 32px; }
+    .cat-card { aspect-ratio: 3/2; }
+    .cat-hero { height: 50vh; min-height: 260px; }
+    .cat-hero-content { padding: 20px; }
+    .example-grid { grid-template-columns: 1fr; }
+    .footer-inner { padding: 64px 20px 40px; }
+    .footer-grid { gap: 32px; padding-bottom: 48px; }
+  }
+</style>
+</head>
+<body id="top">
+
+<!-- ====== TOPBAR ====== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      Linda Newnham
+    </div>
+    <nav class="topnav">
+      <a href="#journalist">Journalist</a>
+      <a href="#forfattare">Författare</a>
+      <a href="#redaktor">Redaktör</a>
+    </nav>
+    <a href="#contact" class="cta">Kontakt</a>
+  </div>
+</header>
+
+<!-- ====== CATEGORY TEXT MENU ====== -->
+<nav class="cat-menu">
+  <div class="cat-menu-inner">
+    <a href="#journalist">Journalist</a>
+    <a href="#forfattare">Författare</a>
+    <a href="#redaktor">Redaktör</a>
+  </div>
+</nav>
+
+<!-- ====== HERO ====== -->
+<div class="page">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Portfolio</div>
+      <h1>Linda<br>Newnham</h1>
+      <p class="lede">Journalist, författare och redaktör</p>
+      <dl class="hero-meta">
+        <div>
+          <dt>Baserad i</dt>
+          <dd>London &amp;<br>Stockholm</dd>
+        </div>
+        <div>
+          <dt>Specialitet</dt>
+          <dd>Kultur &amp;<br>långform</dd>
+        </div>
+        <div>
+          <dt>Tillgänglig</dt>
+          <dd>För uppdrag</dd>
+        </div>
+      </dl>
+    </div>
+    <div class="portrait-wrap">
+      <img src="assets/linda.jpg" alt="Linda Newnham">
+      <div class="portrait-tag">Linda Newnham &nbsp;<b>·</b>&nbsp; 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== CATEGORY CARDS ====== -->
+<div id="categories">
+  <div class="cat-card-grid">
+
+    <a href="#journalist" class="cat-card">
+      <div class="cat-card-media">
+        <img src="assets/linda.jpg" alt="" style="object-position: 60% 15%;">
+      </div>
+      <div class="cat-card-foot">
+        <span class="cat-card-word">Journalist</span>
+        <span class="cat-card-arrow">↗</span>
+      </div>
+    </a>
+
+    <a href="#forfattare" class="cat-card">
+      <div class="cat-card-media">
+        <img src="assets/linda.jpg" alt="" style="object-position: 40% 25%;">
+      </div>
+      <div class="cat-card-foot">
+        <span class="cat-card-word">Författare</span>
+        <span class="cat-card-arrow">↗</span>
+      </div>
+    </a>
+
+    <a href="#redaktor" class="cat-card">
+      <div class="cat-card-media">
+        <img src="assets/linda.jpg" alt="" style="object-position: 55% 10%;">
+      </div>
+      <div class="cat-card-foot">
+        <span class="cat-card-word">Redaktör</span>
+        <span class="cat-card-arrow">↗</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ====== JOURNALIST ====== -->
+<section id="journalist" class="category-section">
+
+  <div class="page">
+    <div class="section-nav">
+      <a href="#top" class="btn-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        Översikt
+      </a>
+    </div>
+  </div>
+
+  <div class="cat-hero">
+    <div class="cat-hero-media">
+      <img src="assets/linda.jpg" alt="" style="object-position: 50% 20%;">
+    </div>
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-label">01</span>
+      <h2 class="cat-hero-title">Journalist</h2>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="example-grid-wrap">
+      <div class="example-grid">
+
+        <a href="journalist/exempel-1.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 50% 15%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Reportage</span>
+            <h3>Artikelns titel</h3>
+            <p>Kort beskrivande text om artikeln — tidning, tema eller sammanhang.</p>
+          </div>
+        </a>
+
+        <a href="journalist/exempel-2.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 60% 20%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Intervju</span>
+            <h3>Artikelns titel</h3>
+            <p>Kort beskrivande text om artikeln — tidning, tema eller sammanhang.</p>
+          </div>
+        </a>
+
+        <a href="journalist/exempel-3.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 45% 10%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Essä</span>
+            <h3>Artikelns titel</h3>
+            <p>Kort beskrivande text om artikeln — tidning, tema eller sammanhang.</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+    <div class="section-nav">
+      <a href="#top" class="btn-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        Översikt
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== FÖRFATTARE ====== -->
+<section id="forfattare" class="category-section">
+
+  <div class="page">
+    <div class="section-nav">
+      <a href="#top" class="btn-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        Översikt
+      </a>
+    </div>
+  </div>
+
+  <div class="cat-hero">
+    <div class="cat-hero-media">
+      <img src="assets/linda.jpg" alt="" style="object-position: 45% 30%;">
+    </div>
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-label">02</span>
+      <h2 class="cat-hero-title">Författare</h2>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="example-grid-wrap">
+      <div class="example-grid">
+
+        <a href="forfattare/exempel-1.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 50% 25%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Bok</span>
+            <h3>Bokens titel</h3>
+            <p>Kort beskrivande text om boken — förlag, tema eller sammanhang.</p>
+          </div>
+        </a>
+
+        <a href="forfattare/exempel-2.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 40% 18%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Bok</span>
+            <h3>Bokens titel</h3>
+            <p>Kort beskrivande text om boken — förlag, tema eller sammanhang.</p>
+          </div>
+        </a>
+
+        <a href="forfattare/exempel-3.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 55% 22%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Antologi</span>
+            <h3>Bokens titel</h3>
+            <p>Kort beskrivande text om boken — förlag, tema eller sammanhang.</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+    <div class="section-nav">
+      <a href="#top" class="btn-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        Översikt
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== REDAKTÖR ====== -->
+<section id="redaktor" class="category-section">
+
+  <div class="page">
+    <div class="section-nav">
+      <a href="#top" class="btn-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        Översikt
+      </a>
+    </div>
+  </div>
+
+  <div class="cat-hero">
+    <div class="cat-hero-media">
+      <img src="assets/linda.jpg" alt="" style="object-position: 55% 12%;">
+    </div>
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-label">03</span>
+      <h2 class="cat-hero-title">Redaktör</h2>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="example-grid-wrap">
+      <div class="example-grid">
+
+        <a href="redaktor/exempel-1.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 50% 20%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Tidning</span>
+            <h3>Publikationens titel</h3>
+            <p>Kort beskrivande text om projektet — roll, omfattning eller sammanhang.</p>
+          </div>
+        </a>
+
+        <a href="redaktor/exempel-2.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 45% 15%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Bokredaktör</span>
+            <h3>Projektets titel</h3>
+            <p>Kort beskrivande text om projektet — roll, omfattning eller sammanhang.</p>
+          </div>
+        </a>
+
+        <a href="redaktor/exempel-3.html" class="example-card">
+          <div class="example-thumb">
+            <img src="assets/linda.jpg" alt="" style="object-position: 58% 18%;">
+          </div>
+          <div class="example-body">
+            <span class="tag">Redaktör</span>
+            <h3>Projektets titel</h3>
+            <p>Kort beskrivande text om projektet — roll, omfattning eller sammanhang.</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+    <div class="section-nav">
+      <a href="#top" class="btn-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        Översikt
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ====== FOOTER / CONTACT ====== -->
+<footer id="contact">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div></div>
+      <h2>Ta <em>kontakt</em></h2>
+      <div class="contact-list">
+        <a href="mailto:linda@lindanewnham.com" class="contact-row">
+          <span class="icn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m2 7 10 7 10-7"/>
+            </svg>
+          </span>
+          linda@lindanewnham.com
+        </a>
+        <a href="https://instagram.com/" class="contact-row">
+          <span class="icn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <circle cx="12" cy="12" r="5"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </span>
+          Instagram
+        </a>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <span>Linda Newnham</span>
+      <span>© 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
