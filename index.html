@@ -84,6 +84,35 @@
   }
   .topbar .cta:hover { opacity: .85; }
 
+  /* ====== HAMBURGER (mobile) ====== */
+  .menu-toggle {
+    display: none;
+    appearance: none; border: 0; background: transparent;
+    padding: 6px; margin-left: auto; cursor: pointer;
+    color: var(--ink); border-radius: 6px;
+    transition: background .15s;
+  }
+  .menu-toggle:hover { background: var(--cream); }
+  .menu-toggle svg { display: block; width: 22px; height: 22px; }
+
+  .mobile-menu {
+    display: none;
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    box-shadow: 0 8px 24px rgba(0,0,0,.07);
+  }
+  .mobile-menu.open { display: block; }
+  .mobile-menu a {
+    display: block; padding: 16px 20px;
+    font-size: 20px; font-style: italic; font-weight: 400;
+    color: var(--ink-2); letter-spacing: -0.01em;
+    border-bottom: 1px solid var(--rule);
+    transition: background .15s, color .15s;
+  }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu a:hover { background: var(--cream); color: var(--ink); }
+
   /* ====== BACK PILL BUTTON ====== */
   .btn-back {
     display: inline-flex; align-items: center; gap: 10px;
@@ -369,6 +398,8 @@
   @media (max-width: 600px) {
     .topbar-inner { padding: 12px 16px; }
     .topnav { display: none; }
+    .topbar .cta { display: none; }
+    .menu-toggle { display: block; }
 .page { padding: 0 20px; }
     .hero { padding: 40px 0 32px; }
     .cat-card { aspect-ratio: 3/2; }
@@ -396,8 +427,37 @@
       <a href="#redaktor">Redaktör</a>
     </nav>
     <a href="#contact" class="cta">Kontakt</a>
+    <button class="menu-toggle" aria-label="Meny" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
   </div>
+  <nav class="mobile-menu">
+    <a href="#top">Start</a>
+    <a href="#journalist">Journalist</a>
+    <a href="#forfattare">Författare</a>
+    <a href="#redaktor">Redaktör</a>
+    <a href="#contact">Kontakt</a>
+  </nav>
 </header>
+
+<script>
+  const toggle = document.querySelector('.menu-toggle');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  toggle.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>
 
 <!-- ====== HERO ====== -->
 <div class="page">
