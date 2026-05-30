@@ -458,6 +458,12 @@
       toggle.setAttribute('aria-expanded', 'false');
     });
   });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.topbar')) {
+      mobileMenu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
 </script>
 
 <!-- ====== HERO ====== -->
