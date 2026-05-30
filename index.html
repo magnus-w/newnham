@@ -84,31 +84,6 @@
   }
   .topbar .cta:hover { opacity: .85; }
 
-  /* ====== CATEGORY TEXT MENU (above hero) ====== */
-  .cat-menu {
-    border-bottom: 1px solid var(--rule);
-    display: flex; justify-content: center;
-    overflow: hidden;
-  }
-  .cat-menu-inner {
-    display: flex; align-items: stretch;
-  }
-  .cat-menu a {
-    font-style: italic; font-weight: 400;
-    font-size: clamp(18px, 2vw, 26px);
-    letter-spacing: -0.01em;
-    color: var(--ink-3);
-    padding: 18px 40px;
-    position: relative;
-    transition: color .15s, background .15s;
-  }
-  .cat-menu a:hover { color: var(--ink); background: var(--cream); }
-  .cat-menu a + a::before {
-    content: "";
-    position: absolute; left: 0; top: 22%; bottom: 22%;
-    width: 1px; background: var(--rule);
-  }
-
   /* ====== BACK PILL BUTTON ====== */
   .btn-back {
     display: inline-flex; align-items: center; gap: 10px;
@@ -153,6 +128,13 @@
     line-height: 1.25; color: var(--ink-3);
     margin: 0 0 44px;
   }
+  .hero .lede a {
+    color: inherit; text-decoration: none; font-style: inherit;
+    border-radius: 4px;
+    padding: 0 5px; margin: 0 -5px;
+    transition: background .2s;
+  }
+  .hero .lede a:hover { background: var(--cream); }
   .section-intro {
     margin: 0; font-size: 16px; font-weight: 400;
     color: var(--ink-2); line-height: 1.75;
@@ -387,8 +369,7 @@
   @media (max-width: 600px) {
     .topbar-inner { padding: 12px 16px; }
     .topnav { display: none; }
-    .cat-menu a { padding: 16px 24px; font-size: 18px; }
-    .page { padding: 0 20px; }
+.page { padding: 0 20px; }
     .hero { padding: 40px 0 32px; }
     .cat-card { aspect-ratio: 3/2; }
     .cat-hero { height: 50vh; min-height: 260px; }
@@ -418,22 +399,13 @@
   </div>
 </header>
 
-<!-- ====== CATEGORY TEXT MENU ====== -->
-<nav class="cat-menu">
-  <div class="cat-menu-inner">
-    <a href="#journalist">Journalist</a>
-    <a href="#forfattare">Författare</a>
-    <a href="#redaktor">Redaktör</a>
-  </div>
-</nav>
-
 <!-- ====== HERO ====== -->
 <div class="page">
   <div class="hero">
     <div>
       <div class="eyebrow">Portfolio</div>
       <h1>Linda<br>Newnham</h1>
-      <p class="lede">Journalist, författare och redaktör</p>
+      <p class="lede"><a href="#journalist">Journalist</a>, <a href="#forfattare">författare</a> och <a href="#redaktor">redaktör</a></p>
       <p class="section-intro hero-intro">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div>
     <div class="portrait-wrap">
