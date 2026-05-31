@@ -202,6 +202,7 @@
       <div class="editor-brand">
         <span>Linda Newnham — Editor</span>
         <button id="save-btn" onclick="saveNow()" style="font-family:var(--serif);font-size:11px;padding:4px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--ink);color:var(--bg);cursor:pointer;letter-spacing:0.1em;text-transform:uppercase">Spara</button>
+        <span id="save-status"></span>
       </div>
       <div class="tabs">
         <button class="tab active" data-tab="hero"       onclick="switchTab('hero')">Start</button>
@@ -280,6 +281,7 @@ let iframeReady = false;
 const openExamples = new Set();
 
 const $ = id => document.getElementById(id);
+const status = msg => { const el = $('save-status'); if (el) el.textContent = msg; };
 
 // ── Auth ─────────────────────────────────────────────────────────
 
@@ -518,7 +520,7 @@ function triggerUpload(cat, idx, field) {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = field === 'document' ? 'image/*,application/pdf' : 'image/jpeg,image/png,image/webp';
-  input.style.cssText = 'position:fixed;top:-100px;left:-100px;opacity:0';
+  input.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none';
   input.onchange = () => { document.body.removeChild(input); if (input.files[0]) doUpload(cat, idx, field, input.files[0]); };
   document.body.appendChild(input);
   input.click();
