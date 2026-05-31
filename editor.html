@@ -296,6 +296,9 @@ async function handleLogin() {
   btn.disabled = true;
 
   try {
+    const authRes = await fetch('/api/auth', { method: 'POST', headers: { 'Authorization': `Bearer ${pw}` } });
+    if (authRes.status === 401) throw new Error('Fel lösenord');
+    if (!authRes.ok) throw new Error(`Serverfel (${authRes.status})`);
     const res = await fetch('/api/data');
     if (!res.ok) throw new Error(`Serverfel (${res.status})`);
     data = await res.json();
