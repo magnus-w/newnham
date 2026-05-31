@@ -13,6 +13,21 @@ python3 -m http.server 4200
 # → http://localhost:4200
 ```
 
+## Deployment
+
+Deployed to Vercel, live at **newnham.se**. Linked to this GitHub repo — every push to `main` auto-deploys.
+
+**Workflow:** edit locally → preview with Python server → `git push` → live in ~30s. No Vercel CLI needed locally.
+
+**DNS (at domain registrar):**
+- `newnham.se` → A record → `76.76.21.21` (apex domains can't use CNAME)
+- `www.newnham.se` → CNAME → `cname.vercel-dns.com`
+- Google Workspace MX + TXT records coexist fine — Vercel only touches A/CNAME
+
+**API routes:** `api/data.js` and `api/upload.js` are served as Vercel serverless functions at `/api/data` and `/api/upload`.
+
+**Note:** `editor.html` has no authentication — keep the URL obscure or add auth before sharing publicly.
+
 ## Architecture
 
 Single-page portfolio for Linda Newnham (journalist, författare, redaktör).

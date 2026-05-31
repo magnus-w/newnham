@@ -194,56 +194,6 @@
   }
   .portrait-tag b { color: var(--accent); font-weight: 600; }
 
-  /* ====== CATEGORY CARDS ====== */
-  #categories {
-    border-bottom: 1px solid var(--rule);
-  }
-  .cat-card-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .cat-card {
-    position: relative;
-    display: block;
-    aspect-ratio: 3/4;
-    overflow: hidden;
-    border-right: 1px solid var(--rule);
-  }
-  .cat-card:last-child { border-right: none; }
-
-  .cat-card-media {
-    position: absolute; inset: 0;
-    transition: transform .6s ease;
-    background: #1e1c19;
-  }
-  .cat-card:hover .cat-card-media { transform: scale(1.04); }
-  .cat-card-media img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
-
-  .cat-card::after {
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(170deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,.6) 100%);
-    pointer-events: none;
-    transition: opacity .3s;
-  }
-  .cat-card:hover::after { opacity: .8; }
-
-  .cat-card-foot {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    z-index: 1;
-    padding: 24px 28px 28px;
-    display: flex; align-items: flex-end; justify-content: space-between;
-  }
-  .cat-card-word {
-    font-style: italic; font-weight: 400;
-    font-size: clamp(30px, 3.5vw, 56px);
-    letter-spacing: -0.02em; line-height: 1;
-    color: #fff;
-  }
-
   /* ====== CATEGORY SECTION ====== */
   .category-section {
     border-bottom: 1px solid var(--rule);
@@ -377,9 +327,6 @@
     .topbar-inner { padding: 14px 20px; gap: 16px; }
     .hero { grid-template-columns: 1fr; gap: 40px; padding: 56px 0 40px; }
     .portrait-wrap { max-width: 380px; margin: 0 auto; width: 100%; }
-    .cat-card-grid { grid-template-columns: 1fr; }
-    .cat-card { aspect-ratio: 4/3; border-right: none; border-bottom: 1px solid var(--rule); }
-    .cat-card:last-child { border-bottom: none; }
     .cat-hero-content { padding: 28px 32px; }
     .example-grid { grid-template-columns: 1fr 1fr; }
     .footer-grid { grid-template-columns: 1fr; }
@@ -393,7 +340,6 @@
     .menu-toggle { display: block; }
 .page { padding: 0 20px; }
     .hero { padding: 40px 0 32px; }
-    .cat-card { aspect-ratio: 3/2; }
     .cat-hero { height: 50vh; min-height: 260px; }
     .cat-hero-content { padding: 20px; }
     .example-grid { grid-template-columns: 1fr; }
@@ -472,51 +418,8 @@
   </div>
 </div>
 
-<!-- ====== CATEGORY CARDS ====== -->
-<div id="categories">
-  <div class="cat-card-grid">
-
-    <a href="#journalist" class="cat-card">
-      <div class="cat-card-media">
-        <img src="assets/journalist.jpg" alt="" style="object-position: 50% 50%;">
-      </div>
-      <div class="cat-card-foot">
-        <span class="cat-card-word">Journalist</span>
-      </div>
-    </a>
-
-    <a href="#forfattare" class="cat-card">
-      <div class="cat-card-media">
-        <img src="assets/forfattare.jpg" alt="" style="object-position: 50% 50%;">
-      </div>
-      <div class="cat-card-foot">
-        <span class="cat-card-word">Författare</span>
-      </div>
-    </a>
-
-    <a href="#redaktor" class="cat-card">
-      <div class="cat-card-media">
-        <img src="assets/redaktor.jpg" alt="" style="object-position: 50% 50%;">
-      </div>
-      <div class="cat-card-foot">
-        <span class="cat-card-word">Redaktör</span>
-      </div>
-    </a>
-
-  </div>
-</div>
-
 <!-- ====== JOURNALIST ====== -->
 <section id="journalist" class="category-section">
-
-  <div class="page">
-    <div class="section-nav">
-      <a href="#top" class="btn-back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
-        Tillbaka
-      </a>
-    </div>
-  </div>
 
   <div class="cat-hero">
     <div class="cat-hero-media">
