@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Editor — Linda Newnham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f5;
+    --paper: #ffffff;
+    --ink: #1b1815;
+    --ink-2: #2f2b25;
+    --ink-3: #635d55;
+    --ink-4: #9a9488;
+    --rule: #e5dfd5;
+    --cream: #f1ebe0;
+    --sand: #e6dcc8;
+    --accent: #6b2936;
+    --serif: 'EB Garamond', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: var(--serif); font-size: 15px; background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  /* ── Gate ── */
+  #gate {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+  }
+  .gate-box { width: 300px; text-align: center; }
+  .gate-box h1 { font-size: 26px; font-weight: 400; margin-bottom: 6px; }
+  .gate-box p { font-size: 14px; color: var(--ink-3); font-style: italic; margin-bottom: 24px; }
+  .gate-box input {
+    width: 100%; font-family: var(--serif); font-size: 16px;
+    padding: 11px 14px; border: 1px solid var(--rule); border-radius: 6px;
+    background: var(--paper); text-align: center; letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+  .gate-box input:focus { outline: none; border-color: var(--ink-3); }
+  .gate-box button {
+    width: 100%; font-family: var(--serif); font-size: 15px;
+    padding: 11px; border: none; border-radius: 6px;
+    background: var(--ink); color: var(--bg); cursor: pointer;
+  }
+  .gate-box button:hover { opacity: .85; }
+  .gate-error { font-size: 13px; color: #c0392b; margin-top: 10px; font-style: italic; min-height: 20px; }
+
+  /* ── App layout ── */
+  #app { display: flex; height: 100vh; }
+
+  /* ── Editor pane ── */
+  #editor-pane {
+    width: 460px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    border-right: 1px solid var(--rule);
+    background: var(--paper);
+    overflow: hidden;
+  }
+  .editor-header {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .editor-brand {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 20px 10px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-4);
+  }
+  #save-status { font-size: 11px; color: var(--ink-4); }
+  .tabs { display: flex; padding: 0 16px; }
+  .tab {
+    font-family: var(--serif); font-size: 14px; font-weight: 400;
+    padding: 9px 12px; border: none; background: none; cursor: pointer;
+    color: var(--ink-3); border-bottom: 2px solid transparent;
+    transition: color .15s; white-space: nowrap;
+  }
+  .tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+  .tab:hover:not(.active) { color: var(--ink); }
+
+  .tab-content { flex: 1; overflow-y: auto; padding: 24px 20px 40px; }
+
+  /* ── Form elements ── */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-4); margin-bottom: 7px;
+  }
+  textarea, input[type=text] {
+    width: 100%; font-family: var(--serif); font-size: 15px;
+    color: var(--ink); border: 1px solid var(--rule); border-radius: 4px;
+    padding: 9px 11px; background: var(--bg); resize: vertical; line-height: 1.6;
+    transition: border-color .15s;
+  }
+  textarea:focus, input[type=text]:focus { outline: none; border-color: var(--ink-3); }
+
+  /* ── Example accordion ── */
+  .examples-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .examples-header h3 {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-4);
+  }
+  .btn-add {
+    font-family: var(--serif); font-size: 12px; padding: 5px 13px;
+    border: 1px solid var(--rule); border-radius: 999px;
+    background: var(--paper); color: var(--ink-3); cursor: pointer;
+    transition: all .15s;
+  }
+  .btn-add:hover { background: var(--cream); color: var(--ink); }
+
+  .example-item {
+    border: 1px solid var(--rule); border-radius: 5px;
+    margin-bottom: 6px; overflow: hidden;
+  }
+  .example-item-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 11px 12px; cursor: pointer; background: var(--bg);
+    user-select: none;
+  }
+  .example-item-header:hover { background: var(--cream); }
+  .example-chevron { font-size: 11px; color: var(--ink-4); flex-shrink: 0; transition: transform .2s; }
+  .example-item.open .example-chevron { transform: rotate(90deg); }
+  .example-item-title {
+    flex: 1; font-size: 14px; color: var(--ink-2);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .example-item-actions { display: flex; gap: 2px; flex-shrink: 0; }
+  .btn-icon {
+    background: none; border: none; cursor: pointer; color: var(--ink-4);
+    padding: 3px 5px; border-radius: 3px; font-size: 14px; line-height: 1;
+    transition: color .15s, background .15s;
+  }
+  .btn-icon:hover { color: var(--ink); background: var(--rule); }
+  .btn-icon.del:hover { color: #b03030; }
+
+  .example-item-body { display: none; padding: 16px 14px; border-top: 1px solid var(--rule); }
+  .example-item.open .example-item-body { display: block; }
+
+  .section-divider {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-4);
+    margin: 20px 0 14px; padding-top: 16px;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ── Upload ── */
+  .upload-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .btn-upload {
+    font-family: var(--serif); font-size: 12px; padding: 6px 12px;
+    border: 1px dashed var(--rule); border-radius: 4px;
+    background: var(--bg); color: var(--ink-3); cursor: pointer;
+    transition: all .15s; flex-shrink: 0;
+  }
+  .btn-upload:hover { border-color: var(--ink-3); color: var(--ink); background: var(--cream); }
+  .upload-preview {
+    width: 48px; height: 36px; object-fit: cover;
+    border-radius: 3px; border: 1px solid var(--rule); flex-shrink: 0;
+  }
+  .upload-filename { font-size: 12px; color: var(--ink-4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── Preview pane ── */
+  #preview-pane { flex: 1; display: flex; flex-direction: column; background: #ddd; overflow: hidden; }
+  .preview-bar {
+    flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px; background: var(--ink); color: rgba(255,255,255,.5);
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .btn-refresh {
+    font-family: var(--serif); font-size: 12px; padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,.2); border-radius: 4px;
+    background: none; color: rgba(255,255,255,.6); cursor: pointer;
+    transition: all .15s;
+  }
+  .btn-refresh:hover { background: rgba(255,255,255,.1); color: #fff; }
+  #preview { flex: 1; border: none; width: 100%; }
+</style>
+</head>
+<body>
+
+<!-- ── Gate ── -->
+<div id="gate">
+  <div class="gate-box">
+    <h1>Linda Newnham</h1>
+    <p>Ange lösenord för att redigera</p>
+    <input type="password" id="gate-pw" placeholder="Lösenord">
+    <button onclick="handleLogin()">Öppna editor</button>
+    <p class="gate-error" id="gate-error"></p>
+  </div>
+</div>
+
+<!-- ── App ── -->
+<div id="app">
+  <div id="editor-pane">
+    <div class="editor-header">
+      <div class="editor-brand">
+        <span>Linda Newnham — Editor</span>
+        <button id="save-btn" onclick="saveNow()" style="font-family:var(--serif);font-size:11px;padding:4px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--ink);color:var(--bg);cursor:pointer;letter-spacing:0.1em;text-transform:uppercase">Spara</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="hero"       onclick="switchTab('hero')">Start</button>
+        <button class="tab"        data-tab="journalist" onclick="switchTab('journalist')">Journalist</button>
+        <button class="tab"        data-tab="forfattare" onclick="switchTab('forfattare')">Författare</button>
+        <button class="tab"        data-tab="redaktor"   onclick="switchTab('redaktor')">Redaktör</button>
+      </div>
+    </div>
+
+    <div class="tab-content">
+
+      <!-- Hero -->
+      <div id="tab-hero">
+        <div class="field">
+          <label>Inledande text (startsida)</label>
+          <textarea id="hero-intro" rows="7" placeholder="Skriv en kort presentation av Linda…" oninput="setField('hero.intro', this.value)"></textarea>
+        </div>
+      </div>
+
+      <!-- Journalist -->
+      <div id="tab-journalist" hidden>
+        <div class="field">
+          <label>Introduktionstext</label>
+          <textarea id="journalist-intro" rows="4" oninput="setField('journalist.intro', this.value)"></textarea>
+        </div>
+        <div class="examples-header">
+          <h3>Exempel</h3>
+          <button class="btn-add" onclick="addExample('journalist')">+ Lägg till</button>
+        </div>
+        <div id="journalist-examples"></div>
+      </div>
+
+      <!-- Författare -->
+      <div id="tab-forfattare" hidden>
+        <div class="field">
+          <label>Introduktionstext</label>
+          <textarea id="forfattare-intro" rows="4" oninput="setField('forfattare.intro', this.value)"></textarea>
+        </div>
+        <div class="examples-header">
+          <h3>Exempel</h3>
+          <button class="btn-add" onclick="addExample('forfattare')">+ Lägg till</button>
+        </div>
+        <div id="forfattare-examples"></div>
+      </div>
+
+      <!-- Redaktör -->
+      <div id="tab-redaktor" hidden>
+        <div class="field">
+          <label>Introduktionstext</label>
+          <textarea id="redaktor-intro" rows="4" oninput="setField('redaktor.intro', this.value)"></textarea>
+        </div>
+        <div class="examples-header">
+          <h3>Exempel</h3>
+          <button class="btn-add" onclick="addExample('redaktor')">+ Lägg till</button>
+        </div>
+        <div id="redaktor-examples"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="preview-pane">
+    <div class="preview-bar">
+      <span>Förhandsvisning</span>
+      <button class="btn-refresh" onclick="saveNow()">↺ Spara & uppdatera</button>
+    </div>
+    <iframe id="preview" src="/index.html"></iframe>
+  </div>
+</div>
+
+<script>
+const CATS = ['journalist', 'forfattare', 'redaktor'];
+let data = {};
+let password = '';
+let iframeReady = false;
+const openExamples = new Set();
+
+const $ = id => document.getElementById(id);
+
+// ── Auth ─────────────────────────────────────────────────────────
+
+async function handleLogin() {
+  const pw = $('gate-pw').value.trim();
+  const errEl = $('gate-error');
+  errEl.textContent = '';
+  if (!pw) return;
+
+  const btn = document.querySelector('.gate-box button');
+  btn.textContent = '…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new Error(`Serverfel (${res.status})`);
+    data = await res.json();
+    password = pw;
+    sessionStorage.setItem('ed_pw', pw);
+    $('gate').style.display = 'none';
+    $('app').style.display = 'flex';
+    renderAll();
+  } catch (err) {
+    errEl.textContent = err.message;
+    btn.textContent = 'Öppna editor';
+    btn.disabled = false;
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  $('gate-pw').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+  $('app').style.display = 'none';
+  const saved = sessionStorage.getItem('ed_pw');
+  if (saved) { $('gate-pw').value = saved; handleLogin(); }
+});
+
+window.addEventListener('message', e => {
+  if (e.data === 'NEWNHAM_READY') {
+    iframeReady = true;
+    sendToPreview();
+  }
+});
+
+// ── Tabs ─────────────────────────────────────────────────────────
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+  CATS.concat(['hero']).forEach(t => { $(`tab-${t}`).hidden = t !== tab; });
+}
+
+// ── Render ───────────────────────────────────────────────────────
+
+function renderAll() {
+  $('hero-intro').value = data.hero?.intro || '';
+  CATS.forEach(cat => {
+    $(`${cat}-intro`).value = data[cat]?.intro || '';
+    renderExamples(cat);
+  });
+}
+
+function renderExamples(cat) {
+  $(`${cat}-examples`).innerHTML =
+    (data[cat]?.examples || []).map((ex, i) => exampleHTML(cat, ex, i)).join('');
+}
+
+function exampleHTML(cat, ex, i) {
+  const isOpen = openExamples.has(ex.id);
+  return `
+<div class="example-item${isOpen ? ' open' : ''}" id="${cat}-ex-${i}">
+  <div class="example-item-header" onclick="toggleExample('${cat}',${i},'${ex.id}')">
+    <span class="example-chevron">▶</span>
+    <span class="example-item-title">${esc(ex.title || '(utan titel)')}</span>
+    <div class="example-item-actions" onclick="event.stopPropagation()">
+      <button class="btn-icon" title="Flytta upp"  onclick="moveExample('${cat}',${i},-1)">↑</button>
+      <button class="btn-icon" title="Flytta ner"  onclick="moveExample('${cat}',${i},1)">↓</button>
+      <button class="btn-icon del" title="Ta bort" onclick="deleteExample('${cat}',${i})">×</button>
+    </div>
+  </div>
+  <div class="example-item-body">
+    <div class="field">
+      <label>Etikett</label>
+      <input type="text" value="${esc(ex.label||'')}" placeholder="t.ex. Reportage"
+        oninput="setField('${cat}.examples.${i}.label',this.value)">
+    </div>
+    <div class="field">
+      <label>Titel</label>
+      <input type="text" value="${esc(ex.title||'')}"
+        oninput="setField('${cat}.examples.${i}.title',this.value);liveTitle('${cat}',${i},this.value)">
+    </div>
+    <div class="field">
+      <label>Kort beskrivning (visas på kortet)</label>
+      <textarea rows="2" oninput="setField('${cat}.examples.${i}.description',this.value)">${esc(ex.description||'')}</textarea>
+    </div>
+    <div class="field">
+      <label>Kortbild</label>
+      <div class="upload-row">
+        <button class="btn-upload" onclick="triggerUpload('${cat}',${i},'image')">Välj bild…</button>
+        ${ex.image
+          ? `<img class="upload-preview" src="${esc(ex.image)}" id="${cat}-${i}-img">`
+          : `<img class="upload-preview" id="${cat}-${i}-img" style="display:none">`}
+        <span class="upload-filename" id="${cat}-${i}-imgname">${ex.image ? shortName(ex.image) : 'Ingen bild vald'}</span>
+      </div>
+    </div>
+    <div class="section-divider">Undersida</div>
+    <div class="field">
+      <label>Rubrik</label>
+      <input type="text" value="${esc(ex.subpage?.headline||'')}"
+        oninput="setField('${cat}.examples.${i}.subpage.headline',this.value)">
+    </div>
+    <div class="field">
+      <label>Brödtext</label>
+      <textarea rows="4" oninput="setField('${cat}.examples.${i}.subpage.intro',this.value)">${esc(ex.subpage?.intro||'')}</textarea>
+    </div>
+    <div class="field">
+      <label>Dokument (PDF eller JPG)</label>
+      <div class="upload-row">
+        <button class="btn-upload" onclick="triggerUpload('${cat}',${i},'document')">Välj fil…</button>
+        <span class="upload-filename" id="${cat}-${i}-docname">${ex.subpage?.document ? shortName(ex.subpage.document) : 'Ingen fil vald'}</span>
+      </div>
+    </div>
+    <div style="text-align:right;padding-top:4px">
+      <a href="/example.html?id=${esc(ex.id)}" target="preview"
+        style="font-size:12px;color:var(--ink-4);text-decoration:underline">
+        Förhandsgranska undersida ↗
+      </a>
+    </div>
+  </div>
+</div>`;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function shortName(url) {
+  try { return decodeURIComponent(url.split('/').pop().replace(/^\d+-/, '')); }
+  catch { return url.split('/').pop(); }
+}
+
+// ── Example CRUD ─────────────────────────────────────────────────
+
+function toggleExample(cat, idx, id) {
+  openExamples.has(id) ? openExamples.delete(id) : openExamples.add(id);
+  $(`${cat}-ex-${idx}`)?.classList.toggle('open');
+}
+
+function addExample(cat) {
+  if (!data[cat]) data[cat] = { intro: '', examples: [] };
+  const id = `${cat}-${Date.now()}`;
+  data[cat].examples.push({
+    id, label: '', title: '', description: '', image: '',
+    subpage: { headline: '', intro: '', document: '', documentType: '' },
+  });
+  openExamples.add(id);
+  renderExamples(cat);
+  sendToPreview();
+}
+
+function deleteExample(cat, idx) {
+  if (!confirm('Ta bort detta exempel?')) return;
+  openExamples.delete(data[cat].examples[idx].id);
+  data[cat].examples.splice(idx, 1);
+  renderExamples(cat);
+  sendToPreview();
+}
+
+function moveExample(cat, idx, dir) {
+  const exs = data[cat].examples;
+  const n = idx + dir;
+  if (n < 0 || n >= exs.length) return;
+  [exs[idx], exs[n]] = [exs[n], exs[idx]];
+  renderExamples(cat);
+  sendToPreview();
+}
+
+function liveTitle(cat, idx, val) {
+  const el = $(`${cat}-ex-${idx}`)?.querySelector('.example-item-title');
+  if (el) el.textContent = val || '(utan titel)';
+}
+
+// ── Data ─────────────────────────────────────────────────────────
+
+function setField(path, value) {
+  const parts = path.split('.');
+  let obj = data;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const key = isNaN(parts[i]) ? parts[i] : +parts[i];
+    const next = parts[i + 1];
+    if (obj[key] == null) obj[key] = isNaN(next) ? {} : [];
+    obj = obj[key];
+  }
+  const last = parts[parts.length - 1];
+  obj[isNaN(last) ? last : +last] = value;
+  sendToPreview();
+}
+
+// ── Preview ──────────────────────────────────────────────────────
+
+function sendToPreview() {
+  const pv = $('preview');
+  if (iframeReady && pv?.contentWindow) {
+    pv.contentWindow.postMessage({ newnham: data }, '*');
+  }
+}
+
+// ── Save ─────────────────────────────────────────────────────────
+
+function saveNow() {
+  sendToPreview();
+  doSave();
+}
+
+async function doSave() {
+  const btn = $('save-btn');
+  btn.textContent = 'Sparar';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/data', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${password}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    btn.textContent = res.ok ? 'Sparat ✓' : `Fel ${res.status}`;
+    if (!res.ok) console.error('Save failed', res.status, await res.text().catch(() => ''));
+  } catch {
+    btn.textContent = 'Offline';
+  }
+  btn.disabled = false;
+  setTimeout(() => { btn.textContent = 'Spara'; }, 2000);
+}
+
+// ── Upload ───────────────────────────────────────────────────────
+
+function triggerUpload(cat, idx, field) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = field === 'document' ? 'image/*,application/pdf' : 'image/jpeg,image/png,image/webp';
+  input.onchange = () => { if (input.files[0]) doUpload(cat, idx, field, input.files[0]); };
+  input.click();
+}
+
+async function doUpload(cat, idx, field, file) {
+  status('Laddar upp…');
+  try {
+    const res = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${password}`, 'Content-Type': file.type },
+      body: file,
+    });
+    if (!res.ok) throw new Error();
+    const { url } = await res.json();
+
+    if (field === 'image') {
+      setField(`${cat}.examples.${idx}.image`, url);
+      const img = $(`${cat}-${idx}-img`);
+      if (img) { img.src = url; img.style.display = ''; }
+      const nm = $(`${cat}-${idx}-imgname`);
+      if (nm) nm.textContent = shortName(url);
+    } else {
+      setField(`${cat}.examples.${idx}.subpage.document`, url);
+      setField(`${cat}.examples.${idx}.subpage.documentType`, file.type === 'application/pdf' ? 'pdf' : 'jpg');
+      const nm = $(`${cat}-${idx}-docname`);
+      if (nm) nm.textContent = shortName(url);
+    }
+  } catch {
+    status('Uppladdning misslyckades ✕');
+  }
+}
+</script>
+</body>
+</html>

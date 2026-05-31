@@ -1,44 +1,28 @@
 # AdminPlan.md — Newnham CMS
 
-## What allabitar does (the reference pattern)
+## Architecture decision
 
-- Split-pane React app: left = editor form, right = live iframe preview
-- All content lives in `data.json` in the repo
-- Uses the **File System Access API** to open and auto-save `data.json` directly — no server required for text content
-- Sends data to the preview iframe via `postMessage` for instant live preview
-- Fallback (browsers without File System Access API): download/import JSON manually
-- Three tabs: Show Info, Latest Episode, Episodes (accordion list)
-- **No file uploads** — images are either external URLs or manually-placed local paths
+**Vercel — local first, then online.**
+
+- Develop and populate content locally with `vercel dev` (Magnus runs this)
+- Deploy to Vercel when ready → Linda gets a URL + password, no terminal ever
+- Same codebase, no rework between local and online phases
 
 ---
 
-## Key differences for newnham
+## Services used
 
-### 1. Different content structure
-Allabitar has a flat show + episodes model. Newnham has:
-- One global field (hero intro)
-- Three categories, each with their own intro text and a list of examples
-- Each example card links to a sub-page that has its own headline, longer intro, and a document (PDF or JPG)
+| Service | Purpose |
+|---------|---------|
+| **Vercel Blob** | Store `data.json` content + all uploaded files (images, PDFs) |
+| **Vercel** static hosting | Serve `index.html`, `example.html`, `editor.html` |
+| **Vercel serverless functions** | `/api/data` and `/api/upload` — write access, password-protected |
 
-### 2. File uploads needed
-Allabitar only handles text + URLs. Newnham needs actual uploads:
-- **Card images** — the photo shown on each example card
-- **Category images** — already in place (journalist.jpg etc.), but could be swappable
-- **Documents** — a PDF or JPG shown full-width on each example sub-page
-
-This means a **lightweight local server** is needed (like cv's server.js, or a simple `server.py`), accepting `POST /upload` and saving files to `assets/`.
-
-### 3. Sub-page content
-Allabitar has no sub-pages. For newnham, each example has a sub-page with:
-- Headline
-- Longer intro text
-- A document (PDF or multi-image JPG)
-
-**Proposed approach:** Instead of one static HTML file per example, make `example.html` a single **dynamic template** that reads `data.json` + a URL parameter (e.g. `example.html?id=journalist-001`) and renders the right content. No copying files — one template handles all sub-pages.
+No database needed. One service (Blob) handles both structured data and files.
 
 ---
 
-## Proposed data.json structure
+## Data structure (data.json stored as a Blob)
 
 ```json
 {
@@ -53,117 +37,130 @@ Allabitar has no sub-pages. For newnham, each example has a sub-page with:
         "label": "Reportage",
         "title": "Artikelns titel",
         "description": "Kort beskrivande text på kortet.",
-        "image": "assets/journalist/ex001-card.jpg",
+        "image": "https://blob.vercel-storage.com/...",
         "subpage": {
           "headline": "Artikelns fulla titel",
           "intro": "Längre beskrivande text om detta arbete.",
-          "document": "assets/journalist/ex001-document.pdf",
+          "document": "https://blob.vercel-storage.com/...",
           "documentType": "pdf"
         }
       }
     ]
   },
-  "forfattare": {
-    "intro": "...",
-    "examples": []
-  },
-  "redaktor": {
-    "intro": "...",
-    "examples": []
-  }
+  "forfattare": { "intro": "...", "examples": [] },
+  "redaktor":   { "intro": "...", "examples": [] }
 }
 ```
 
-`documentType` is `"pdf"` or `"jpg"` — controls how the sub-page renders it (`<embed>` vs `<img>`).
+`documentType` is `"pdf"` or `"jpg"` — controls how example.html renders it.
+
+---
+
+## API routes (serverless functions in `/api`)
+
+### `GET /api/data`
+Returns the current `data.json` blob. Public — used by index.html and example.html.
+
+### `POST /api/data`
+Replaces the `data.json` blob with the posted JSON body.
+Password-protected: checks `Authorization: Bearer <EDITOR_PASSWORD>` header against env var.
+
+### `POST /api/upload`
+Accepts multipart file upload. Saves to Vercel Blob. Returns `{ url, pathname }`.
+Password-protected: same mechanism.
+
+---
+
+## Password protection
+
+Single env var: `EDITOR_PASSWORD` (set in Vercel dashboard + `.env.local` for local dev).
+
+`editor.html` prompts for password on load, stores in `sessionStorage`, sends as Bearer token with every API call. No auth library needed.
+
+---
+
+## File structure
+
+```
+/
+├── api/
+│   ├── data.js       — GET + POST for data content
+│   └── upload.js     — POST for file uploads
+├── assets/           — static images already in repo
+├── editor.html       — CMS UI (password-gated)
+├── example.html      — dynamic template (?id= param)
+├── index.html        — dynamic rendering (fetches /api/data)
+├── package.json      — { "@vercel/blob": "..." }
+└── .env.local        — EDITOR_PASSWORD, BLOB_READ_WRITE_TOKEN (gitignored)
+```
 
 ---
 
 ## How index.html changes
 
-Currently all content is hardcoded HTML. With this system:
-- On load, `index.html` fetches `data.json`
-- JavaScript populates the hero intro, each category intro, and each example card grid
-- Example card links become `example.html?id=journalist-001` etc.
-- Falls back gracefully if `data.json` is missing (shows placeholder text)
-
-This is a meaningful change to `index.html` but keeps it as a static file — no server rendering.
+- On load, fetches `GET /api/data`
+- JS populates: hero intro, category intros, example card grids
+- Example card links → `example.html?id=journalist-001`
+- Graceful fallback if fetch fails (shows placeholder text)
 
 ---
 
 ## How example.html changes
 
-Becomes a dynamic template:
-- Reads `?id=` from the URL
-- Fetches `data.json`
-- Finds the right example by ID across all categories
-- Renders headline, intro, and document (PDF embed or img)
-- Back button dynamically points to the right category anchor (`#journalist` etc.)
+- Reads `?id=` from URL
+- Fetches `GET /api/data`
+- Finds matching example across all categories
+- Renders: headline, intro, document (PDF `<embed>` or `<img>`)
+- Back button dynamically points to correct category anchor
 
 ---
 
-## Editor UI plan (editor.html)
+## Editor UI (editor.html)
 
-**Same split-pane layout as allabitar** — editor left, live preview right.
+Split-pane: editor form left, live `<iframe>` preview right.
 
 ### Tabs
 | Tab | Contents |
 |-----|----------|
-| **Hero** | Single textarea: hero intro paragraph |
+| **Hero** | Textarea: hero intro |
 | **Journalist** | Category intro textarea + example accordion |
 | **Författare** | Same |
 | **Redaktör** | Same |
 
-### Example accordion (per category — same pattern as allabitar episodes)
-Each example row expands to show:
-- **Label** — text input ("Reportage", "Intervju" etc.)
-- **Title** — text input
-- **Short description** — textarea (2–3 rows)
-- **Card image** — upload button + preview (saves to `assets/journalist/`)
-- **Sub-page: Headline** — text input
-- **Sub-page: Intro** — textarea (4–5 rows)
-- **Sub-page: Document** — upload button (PDF or JPG), shows type + filename
-- Reorder ↑↓ and delete ×, same as allabitar
+### Example accordion (per category)
+Each row expands to show:
+- Label, Title, Short description (text inputs / textarea)
+- Card image — upload button → POST /api/upload → stores URL in data
+- Sub-page: Headline, Intro
+- Sub-page: Document — upload button (PDF or JPG), stores URL + type
+- Reorder ↑↓ and delete ×
 
-### Save / file handling
-Same as allabitar:
-- File System Access API opens `data.json` directly, auto-saves on change
-- Fallback: download/import JSON
+### Save behaviour
+Every change auto-saves: debounced POST to `/api/data` with full JSON.
+No manual save button needed.
 
 ### Preview
-- Right pane iframe showing `index.html`
-- Live-updates as editor changes (via postMessage, same as allabitar)
-- Sub-page preview: a second "Preview sub-page" link opens `example.html?id=…` in the iframe for the currently expanded example
+Right pane `<iframe>` pointing to `index.html`. Reloads after each save.
+"Preview sub-page" button loads `example.html?id=…` for the open example.
 
 ---
 
-## Server (server.py)
+## Build order
 
-Simple Python HTTP server — same idea as allabitar's `start-server.py` but adds:
+1. `package.json` — minimal (`@vercel/blob`)
+2. `.env.local` — placeholder tokens
+3. `api/data.js` — GET + POST
+4. `api/upload.js` — POST
+5. `data.json` — initial seed (Lorem Ipsum placeholders)
+6. `index.html` — add fetch + JS rendering
+7. `example.html` — convert to dynamic template
+8. `editor.html` — CMS UI
 
-```
-POST /upload
-  body: multipart/form-data
-  fields: file, category (journalist|forfattare|redaktor), type (card|document)
-  saves to: assets/{category}/{filename}
-  returns: { "path": "assets/journalist/filename.jpg" }
-```
+## Local dev
 
-Also serves all static files (index.html, editor.html, data.json, assets/).
-
-Start command:
 ```bash
-python3 server.py
-# Sajt:    http://localhost:4200/index.html
-# Editor:  http://localhost:4200/editor.html
+npm install
+vercel dev
+# Site:    http://localhost:3000/index.html
+# Editor:  http://localhost:3000/editor.html
 ```
-
----
-
-## Build order for next session
-
-1. `server.py` — static serving + upload endpoint
-2. `data.json` — initial structure with Lorem Ipsum content
-3. `index.html` — add fetch + JS rendering of data.json content
-4. `example.html` — convert to dynamic template
-5. `editor.html` — build the CMS UI
-6. Test full loop: edit → save → preview → sub-page

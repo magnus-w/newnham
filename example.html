@@ -3,25 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<!--
-  EXAMPLE SUB-PAGE TEMPLATE
-  ─────────────────────────
-  Copy this file to the right folder, e.g.:
-    journalist/artikel-titel.html
-    forfattare/bok-titel.html
-    redaktor/projekt-titel.html
-
-  Then edit:
-    1. <title> and <meta> tags
-    2. data-back-href  → anchor on index.html for the "back" link
-    3. data-back-label → label on the back button, e.g. "Journalist"
-    4. .example-eyebrow, h1, .example-meta, .example-desc
-    5. The document block: swap in <img> or <embed> for your PDF/JPG
--->
-<title>Titel — Linda Newnham</title>
+<title>Linda Newnham</title>
 
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Titel — Linda Newnham" />
+<meta property="og:title" content="Linda Newnham" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -193,7 +178,7 @@
 <!-- ====== TOPBAR ====== -->
 <header class="topbar">
   <div class="topbar-inner">
-    <a href="../index.html" class="brand">
+    <a href="index.html" class="brand">
       <span class="brand-dot"></span>
       Linda Newnham
     </a>
@@ -203,15 +188,9 @@
 <!-- ====== TOP BACK BUTTON ====== -->
 <div class="page">
   <div class="section-nav">
-    <!--
-      Set href to the correct anchor:
-        ../index.html#journalist
-        ../index.html#forfattare
-        ../index.html#redaktor
-    -->
-    <a href="../index.html#journalist" class="btn-back" id="back-top">
+    <a href="index.html" class="btn-back" id="back-top">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
-      Journalist
+      <span id="back-label-top">Tillbaka</span>
     </a>
   </div>
 </div>
@@ -219,41 +198,18 @@
 <!-- ====== EXAMPLE HEADER ====== -->
 <div class="page">
   <div class="example-header">
-    <div class="example-eyebrow">Journalist <!-- or Författare / Redaktör --></div>
+    <div class="example-eyebrow" id="eyebrow"></div>
     <div class="example-header-body">
-      <h1>Artikelns titel</h1>
-      <p class="example-meta">Publikation &nbsp;·&nbsp; År</p>
-      <p class="example-desc">
-        Längre beskrivande text om detta arbete. Här finns plats att förklara bakgrund,
-        sammanhang, eller vad som var utmärkande med uppdraget. Texten kan vara
-        <em>ett par meningar eller ett kort stycke</em> — tillräckligt för att ge läsaren
-        en känsla för arbetet.
-      </p>
+      <h1 id="headline"></h1>
+      <p class="example-desc" id="intro"></p>
     </div>
   </div>
 </div>
 
 <!-- ====== DOCUMENT ====== -->
 <div class="page">
-  <div class="document-section">
-
-    <!--
-      OPTION A — single JPG spread:
-      <img src="artikel.jpg" alt="Artikelns titel" class="document-image">
-
-      OPTION B — multiple page images (e.g. photographed spreads):
-      <div class="document-pages">
-        <img src="sida-1.jpg" alt="Sida 1">
-        <img src="sida-2.jpg" alt="Sida 2">
-        <img src="sida-3.jpg" alt="Sida 3">
-      </div>
-
-      OPTION C — embedded PDF:
-      <embed src="artikel.pdf" type="application/pdf" class="document-pdf">
-
-      Placeholder until images/PDF are added:
-    -->
-    <div style="
+  <div class="document-section" id="document-section">
+    <div id="document-placeholder" style="
       aspect-ratio: 3/4;
       background: var(--sand);
       border: 1px solid var(--rule);
@@ -263,16 +219,15 @@
     ">
       Dokument läggs in här
     </div>
-
   </div>
 </div>
 
 <!-- ====== BOTTOM BACK BUTTON ====== -->
 <div class="page">
   <div class="section-nav">
-    <a href="../index.html#journalist" class="btn-back" id="back-bottom">
+    <a href="index.html" class="btn-back" id="back-bottom">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
-      Journalist
+      <span id="back-label-bottom">Tillbaka</span>
     </a>
   </div>
 </div>
@@ -286,6 +241,62 @@
     </div>
   </div>
 </footer>
+
+<script>
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if (!id) return;
+
+  let data;
+  try {
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new Error();
+    data = await res.json();
+  } catch {
+    return;
+  }
+
+  const cats = { journalist: 'Journalist', forfattare: 'Författare', redaktor: 'Redaktör' };
+  let ex, catKey, catLabel;
+  for (const [key, label] of Object.entries(cats)) {
+    ex = (data[key]?.examples || []).find(e => e.id === id);
+    if (ex) { catKey = key; catLabel = label; break; }
+  }
+  if (!ex) return;
+
+  const backHref = `index.html#${catKey}`;
+  document.getElementById('back-top').href = backHref;
+  document.getElementById('back-bottom').href = backHref;
+  document.getElementById('back-label-top').textContent = catLabel;
+  document.getElementById('back-label-bottom').textContent = catLabel;
+
+  document.getElementById('eyebrow').textContent = catLabel;
+  document.getElementById('headline').textContent = ex.subpage?.headline || ex.title || '';
+  document.getElementById('intro').textContent = ex.subpage?.intro || '';
+  document.title = `${ex.subpage?.headline || ex.title || 'Linda Newnham'} — Linda Newnham`;
+
+  const section = document.getElementById('document-section');
+  const placeholder = document.getElementById('document-placeholder');
+  const doc = ex.subpage?.document;
+  if (doc) {
+    placeholder.remove();
+    if (ex.subpage.documentType === 'pdf') {
+      const embed = document.createElement('embed');
+      embed.src = doc;
+      embed.type = 'application/pdf';
+      embed.className = 'document-pdf';
+      section.appendChild(embed);
+    } else {
+      const img = document.createElement('img');
+      img.src = doc;
+      img.alt = ex.subpage?.headline || '';
+      img.className = 'document-image';
+      section.appendChild(img);
+    }
+  }
+})();
+</script>
 
 </body>
 </html>
