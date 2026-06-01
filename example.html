@@ -131,7 +131,6 @@
   /* ====== EXAMPLE HEADER ====== */
   .example-header {
     padding: 72px 0 56px;
-    display: grid; grid-template-columns: 180px 1fr; gap: 40px;
     border-bottom: 1px solid var(--rule);
   }
   .example-eyebrow {
@@ -139,7 +138,7 @@
     color: var(--ink-4); letter-spacing: 0.18em;
     text-transform: uppercase;
     display: flex; align-items: center; gap: 10px;
-    padding-top: 12px;
+    margin-bottom: 16px;
   }
   .example-header-body h1 {
     font-size: clamp(36px, 5vw, 72px);
@@ -210,8 +209,6 @@
   /* ====== RESPONSIVE ====== */
   @media (max-width: 960px) {
     .topbar-inner { padding: 14px 20px; gap: 16px; }
-    .example-header { grid-template-columns: 1fr; gap: 16px; }
-    .example-eyebrow { padding-top: 0; }
   }
   @media (max-width: 600px) {
     .topbar-inner { padding: 12px 16px; }
@@ -261,8 +258,8 @@
 <!-- ====== EXAMPLE HEADER ====== -->
 <div class="page">
   <div class="example-header">
-    <div class="example-eyebrow" id="eyebrow"></div>
     <div class="example-header-body">
+      <div class="example-eyebrow" id="eyebrow"></div>
       <h1 id="headline"></h1>
       <p class="example-desc" id="intro"></p>
     </div>
@@ -282,16 +279,6 @@
     ">
       Dokument läggs in här
     </div>
-  </div>
-</div>
-
-<!-- ====== BOTTOM BACK BUTTON ====== -->
-<div class="page">
-  <div class="section-nav">
-    <a href="index.html" class="btn-back" id="back-bottom">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
-      <span id="back-label-bottom">Tillbaka</span>
-    </a>
   </div>
 </div>
 
@@ -355,10 +342,6 @@
     }
   }
   if (!ex) return;
-
-  const backHref = `index.html#${catKey}`;
-  document.getElementById('back-bottom').href = backHref;
-  document.getElementById('back-label-bottom').textContent = catLabel;
 
   document.getElementById('eyebrow').textContent = catLabel;
   document.getElementById('headline').textContent = ex.subpage?.headline || ex.title || '';

@@ -593,6 +593,11 @@ function renderFromData(data) {
     const res = await fetch('/api/data');
     if (res.ok) renderFromData(await res.json());
   } catch {}
+  // Re-scroll after dynamic content renders so layout shifts don't displace the hash target
+  if (location.hash) {
+    const el = document.querySelector(location.hash);
+    if (el) el.scrollIntoView({ behavior: 'instant' });
+  }
 })();
 
 // Editor preview mode: signal ready, then re-render on incoming data
