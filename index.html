@@ -263,6 +263,8 @@
     width: 100%; height: 100%; object-fit: cover;
     transition: transform .4s ease;
   }
+  .example-thumb.portrait { background: #fff; }
+  .example-thumb.portrait img { object-fit: contain; }
   .example-card:hover .example-thumb img { transform: scale(1.03); }
   .example-body {
     padding: 20px 24px 28px;
@@ -573,7 +575,10 @@ function renderFromData(data) {
       const ex = d.examples[i];
       card.href = `example.html?id=${encodeURIComponent(ex.id)}`;
       const img = card.querySelector('img');
-      if (ex.image) { img.src = ex.image; }
+      if (ex.image) {
+        img.src = ex.image;
+        img.onload = () => { if (img.naturalHeight > img.naturalWidth) img.parentElement.classList.add('portrait'); };
+      }
       else { img.parentElement.style.background = 'var(--sand)'; img.remove(); }
       card.querySelector('.tag').textContent = ex.label || '';
       card.querySelector('h3').textContent = ex.title || '';
