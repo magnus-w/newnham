@@ -66,11 +66,11 @@
   /* ====== BACK PILL BUTTON ====== */
   .btn-back {
     display: inline-flex; align-items: center; gap: 10px;
-    font-family: var(--serif); font-size: 15px; font-weight: 400;
-    font-style: italic;
+    font-family: var(--serif); font-size: 11px; font-weight: 500;
+    font-style: normal; letter-spacing: 0.16em; text-transform: uppercase;
     padding: 10px 22px 10px 18px; border-radius: 999px;
     border: 1px solid var(--rule);
-    background: var(--paper); color: var(--ink-2);
+    background: var(--paper); color: var(--ink-4);
     transition: background .15s, color .15s, border-color .15s;
   }
   .btn-back:hover { background: var(--cream); color: var(--ink); border-color: var(--ink-4); }
@@ -258,10 +258,17 @@
   }
 
   const cats = { journalist: 'Journalist', forfattare: 'Författare', redaktor: 'Redaktör' };
+  const catParam = params.get('cat');
   let ex, catKey, catLabel;
-  for (const [key, label] of Object.entries(cats)) {
-    ex = (data[key]?.examples || []).find(e => e.id === id);
-    if (ex) { catKey = key; catLabel = label; break; }
+  if (catParam && cats[catParam]) {
+    ex = (data[catParam]?.examples || []).find(e => e.id === id);
+    if (ex) { catKey = catParam; catLabel = cats[catParam]; }
+  }
+  if (!ex) {
+    for (const [key, label] of Object.entries(cats)) {
+      ex = (data[key]?.examples || []).find(e => e.id === id);
+      if (ex) { catKey = key; catLabel = label; break; }
+    }
   }
   if (!ex) return;
 
