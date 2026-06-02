@@ -253,6 +253,7 @@
     transition: background .2s;
   }
   .example-card:hover { background: var(--cream); }
+  .example-placeholder { background: var(--bg); pointer-events: none; }
   .example-thumb {
     aspect-ratio: 3/2;
     overflow: hidden;
@@ -589,6 +590,15 @@ function renderFromData(data) {
       card.querySelector('h3').textContent = ex.title || '';
       card.querySelector('p').textContent = ex.description || '';
     });
+
+    const remainder = d.examples.length % 3;
+    if (remainder !== 0) {
+      for (let j = 0; j < 3 - remainder; j++) {
+        const ph = document.createElement('div');
+        ph.className = 'example-placeholder';
+        grid.appendChild(ph);
+      }
+    }
   });
 }
 
