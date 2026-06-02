@@ -26,7 +26,7 @@ Deployed to Vercel, live at **newnham.se**. Linked to this GitHub repo — every
 
 **API routes:** `api/data.js` and `api/upload.js` are served as Vercel serverless functions at `/api/data` and `/api/upload`.
 
-**Note:** `editor.html` has no authentication — keep the URL obscure or add auth before sharing publicly.
+**Note:** `editor.html` has no route protection — keep the URL obscure.
 
 ## Architecture
 
@@ -34,7 +34,11 @@ Single-page portfolio for Linda Newnham (journalist, författare, redaktör).
 
 ### Files
 - `index.html` — entire site (all styles, all sections, minimal JS)
-- `example.html` — sub-page template; copy to e.g. `journalist/artikel.html` per example
+- `example.html` — sub-page template; loads content dynamically via `?id=...&cat=...` query params; has full sticky nav (no standalone back button)
+- `editor.html` — password-protected CMS; auth via `/api/auth`
+- `api/auth.js` — checks `EDITOR_PASSWORD` env var (set in Vercel)
+- `api/data.js` — reads/writes example card content
+- `api/upload.js` — handles image uploads
 - `assets/` — images (linda.jpg, journalist.jpg, forfattare.jpg, redaktor.jpg)
 
 ### Page structure (index.html)
@@ -66,6 +70,19 @@ All **EB Garamond** — no other typefaces.
 --accent: #6b2936  wine red (brand dot, selection)
 --pop: #c8a96e     gold (footer em)
 ```
+
+### Dynamic content
+All example card content (titles, descriptions, images) lives in the API, not the HTML. The `renderFromData()` function in `index.html` populates the grids on page load. The HTML grids (`#journalist-grid`, `#forfattare-grid`, `#redaktor-grid`) are intentionally empty — don't add example cards to the HTML directly.
+
+### Example card grid
+- Separators between cards: `background: var(--rule)` + `gap: 2px` on the grid (not borders on cards).
+- Incomplete last rows get `.example-placeholder` divs (bg: `var(--bg)`) so the empty cell doesn't expose the rule-coloured grid background.
+- Portrait images (height > width) → `object-fit: contain` + white background, detected via `img.naturalHeight > img.naturalWidth` on load.
+- Landscape images → `object-fit: cover` + sand background.
+
+### Responsive notes
+- Hero: on mobile, portrait appears **above** the intro text (CSS `order` reversal). Not a bug.
+- Example grid: 3 columns (desktop) → 2 columns (tablet) → 1 column (mobile).
 
 ### Navigation
 - Smooth scroll via `scroll-behavior: smooth` on `<html>`
